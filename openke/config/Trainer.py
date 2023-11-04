@@ -50,12 +50,34 @@ class Trainer(object):
 			'mode': data['mode']
 		})
 		loss.backward()
-		self.optimizer.step()		 
+		self.optimizer.step()
 		return loss.item()
 
 	def run(self):
 		if self.use_gpu:
 			self.model.cuda()
+
+		# 首先有一个Model: init_model
+
+		# 计算init_Model的正样本得分p0， 负样本得分q0
+
+		# 初始化种群
+
+		# 从init_model拷贝一个s_model， s_model 根据solution 构造loss function 和 optimizer, model参数，构造完整
+
+		# 做一次优化
+
+		# 计算 s_model 正样本得分p1, 副样本得分q1
+
+		# 计算 目标函数 变化率越小，说明效果越明显，有利于降低loss
+			# f1 = (p1 - p0)/p0   正样本得分，越小越好  此处目标为变化率
+			# f2 = (q0 - q1)/q0   负样本得分，越大越好
+
+			# or (MarginLoss(p,q)+SigmoidLoss(p,q)+SoftplusLoss(p,q))/3 ??/
+
+		# EA N次， 计算下一个solution时，copy初始的Model
+
+		# 保留ps, 并随机选择一个solution进行优化
 
 		if self.optimizer != None:
 			pass

@@ -42,6 +42,8 @@ class TransE(Model):
 		else:
 			self.margin_flag = False
 
+	def setPNorm(self, norm):
+		self.p_norm = norm
 
 	def _calc(self, h, t, r, mode):
 		if self.norm_flag:
