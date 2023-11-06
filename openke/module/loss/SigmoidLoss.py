@@ -6,11 +6,27 @@ from .Loss import Loss
 
 class SigmoidLoss(Loss):
 
-	def __init__(self, adv_temperature = None):
+	def __init__(self, adv_temperature = 0):
 		super(SigmoidLoss, self).__init__()
 		self.criterion = nn.LogSigmoid()
-		if adv_temperature != None:
+		self.adv_temperature_value = adv_temperature
+		if adv_temperature != 0:
 			self.adv_temperature = nn.Parameter(torch.Tensor([adv_temperature]))
+			self.adv_temperature.requires_grad = False
+			self.adv_flag = True
+		else:
+			self.adv_flag = False
+	
+	def getType(self):
+		return 'sigmoidloss'
+
+	def getAdvTemperature(self):
+		return self.adv_temperature_value
+
+	def setAdvTemperature(self, value):
+		self.adv_temperature_value = value
+		if self.adv_temperature_value != 0:
+			self.adv_temperature = nn.Parameter(torch.Tensor([self.adv_temperature_value]))
 			self.adv_temperature.requires_grad = False
 			self.adv_flag = True
 		else:

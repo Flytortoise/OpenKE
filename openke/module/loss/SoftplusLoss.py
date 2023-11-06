@@ -6,16 +6,32 @@ from .Loss import Loss
 
 class SoftplusLoss(Loss):
 
-	def __init__(self, adv_temperature = None):
+	def __init__(self, adv_temperature = 0):
 		super(SoftplusLoss, self).__init__()
 		self.criterion = nn.Softplus()
-		if adv_temperature != None:
+		self.adv_temperature_value = adv_temperature
+		if adv_temperature != 0:
 			self.adv_temperature = nn.Parameter(torch.Tensor([adv_temperature]))
 			self.adv_temperature.requires_grad = False
 			self.adv_flag = True
 		else:
 			self.adv_flag = False
 	
+	def getType(self):
+		return 'softplusloss'
+	
+	def getAdvTemperature(self):
+		return self.adv_temperature_value
+
+	def setAdvTemperature(self, value):
+		self.adv_temperature_value = value
+		if self.adv_temperature_value != 0:
+			self.adv_temperature = nn.Parameter(torch.Tensor([self.adv_temperature_value]))
+			self.adv_temperature.requires_grad = False
+			self.adv_flag = True
+		else:
+			self.adv_flag = False
+
 	def get_weights(self, n_score):
 		return F.softmax(n_score * self.adv_temperature, dim = -1).detach()
 

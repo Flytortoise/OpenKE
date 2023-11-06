@@ -1,5 +1,4 @@
-import openke
-import sys
+#!/home/rock/.conda/envs/openke/bin/python
 from openke.config import Trainer, Tester
 from openke.module.model import TransE
 from openke.module.loss import MarginLoss
@@ -36,19 +35,15 @@ model = NegativeSampling(
     batch_size = train_dataloader.get_batch_size()
 )
 
-
-train_pkg_name = './my_pkg/my_transE{}.ckpt'.format(1)
-print(train_pkg_name)
+pkg_name = './my_pkg/transe_FB15K237_{}.ckpt'.format(0)
+print(pkg_name)
 
 # train the model
 trainer = Trainer(model = model, data_loader = train_dataloader, train_times = 1000, alpha = 1.0, use_gpu = True)
 trainer.run()
-transe.save_checkpoint(train_pkg_name)
-
+transe.save_checkpoint(pkg_name)
 
 # test the model
-# test_pkg_name = "./checkpoint/transe_FB15K237_1.ckpt"
-test_pkg_name = train_pkg_name
-transe.load_checkpoint(test_pkg_name)
+transe.load_checkpoint(pkg_name)
 tester = Tester(model = transe, data_loader = test_dataloader, use_gpu = True)
 tester.run_link_prediction(type_constrain = False)

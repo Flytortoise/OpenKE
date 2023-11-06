@@ -5,6 +5,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+my_pkg/
 result/
 checkpoint/
 build/

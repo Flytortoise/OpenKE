@@ -7,12 +7,28 @@ from .Loss import Loss
 
 class MarginLoss(Loss):
 
-	def __init__(self, adv_temperature = None, margin = 6.0):
+	def __init__(self, adv_temperature = 0, margin = 6.0):
 		super(MarginLoss, self).__init__()
 		self.margin = nn.Parameter(torch.Tensor([margin]))
 		self.margin.requires_grad = False
-		if adv_temperature != None:
+		self.adv_temperature_value = adv_temperature
+		if adv_temperature != 0:
 			self.adv_temperature = nn.Parameter(torch.Tensor([adv_temperature]))
+			self.adv_temperature.requires_grad = False
+			self.adv_flag = True
+		else:
+			self.adv_flag = False
+
+	def getType(self):
+		return 'marginloss'
+
+	def getAdvTemperature(self):
+		return self.adv_temperature_value
+
+	def setAdvTemperature(self, value):
+		self.adv_temperature_value = value
+		if self.adv_temperature_value != 0:
+			self.adv_temperature = nn.Parameter(torch.Tensor([self.adv_temperature_value]))
 			self.adv_temperature.requires_grad = False
 			self.adv_flag = True
 		else:

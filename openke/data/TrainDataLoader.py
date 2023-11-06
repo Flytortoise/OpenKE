@@ -21,6 +21,9 @@ class TrainDataSampler(object):
 
 	def __len__(self):
 		return self.nbatches
+	
+	def getCurData(self):
+		return self.datasampler()
 
 class TrainDataLoader(object):
 
@@ -227,3 +230,9 @@ class TrainDataLoader(object):
 
 	def __len__(self):
 		return self.nbatches
+
+	def getCurData(self):
+		if self.sampling_mode == "normal":
+			return TrainDataSampler(self.nbatches, self.sampling).getCurData()
+		else:
+			return TrainDataSampler(self.nbatches, self.cross_sampling).getCurData()
