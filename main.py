@@ -35,12 +35,13 @@ model = NegativeSampling(
     batch_size = train_dataloader.get_batch_size()
 )
 
-pkg_name = './my_pkg/transe_FB15K237_{}.ckpt'.format(0)
+pkg_name = './my_pkg/transe_FB15K237_{}.ckpt'.format(1)
 print(pkg_name)
 
 # train the model
 trainer = Trainer(model = model, data_loader = train_dataloader, train_times = 1000, alpha = 1.0, use_gpu = True)
 trainer.run()
+transe = trainer.get_model()
 transe.save_checkpoint(pkg_name)
 
 # test the model

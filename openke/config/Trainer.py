@@ -66,17 +66,23 @@ class Trainer(object):
         if self.use_gpu:
             self.model.cuda()
 
+        print(time.asctime(time.localtime(time.time())))
         # 首先有一个Model: init_model
         # 计算init_Model的正样本得分p0， 负样本得分q0
         # 初始化种群
         Population = []
         ea_alg = NSGAII()
 
-        data = self.data_loader.getCurData()
-        init_solution = Solution(self.model, same = True, opt_type = self.opt_method, lr = self.alpha, data_loader = self.data_loader, data = data)
+        all_data = []
+        # index = 0
+        # for i in range(10):
+        #     data = copy.deepcopy(self.data_loader.getNextData())
+        #     all_data.append(data)
+
+        init_solution = Solution(self.model, same = True, opt_type = self.opt_method, lr = self.alpha, data_loader = self.data_loader, data = all_data)
         Population.append(init_solution)
         for i in range(POPULATION_SIZE-1):
-            Population.append(Solution(self.model, same = False, data_loader = self.data_loader, data = data))
+            Population.append(Solution(self.model, same = False, data_loader = self.data_loader, data = all_data))
 
         # 否 -> 非支配排序
         ea_alg.fast_non_dominated_sort(Population)
@@ -104,16 +110,22 @@ class Trainer(object):
             Q_t = Q_n
 
         print("**********************")
+        index = 0
+        min_obj_flag = P_t[index].obj2
         for i in range(POPULATION_SIZE):
             P_t[i].displayObj()
+            if P_t[i].obj2 < min_obj_flag:
+                min_obj_flag = P_t[i].obj2
+                index = i
 
-        index = random.randint(0, POPULATION_SIZE - 1)
+        # index = random.randint(0, POPULATION_SIZE - 1)
         print("select index {}".format(index))
-        P_t[index].displayIndex()
+        P_t[index].display()
         self.model = P_t[index].model
         self.optimizer = P_t[index].optimizer
         print("Finish initializing...")
-        
+        print(time.asctime(time.localtime(time.time())))
+
         training_range = tqdm(range(self.train_times))
         for epoch in training_range:
             res = 0.0
@@ -172,6 +184,9 @@ class Trainer(object):
 
     def set_model(self, model):
         self.model = model
+    
+    def get_model(self):
+        return self.model.model
 
     def to_var(self, x, use_gpu):
         if use_gpu:

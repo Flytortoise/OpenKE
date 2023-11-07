@@ -63,8 +63,9 @@ class Solution:
             self.model.cuda()
         # 训练一次，获得obj1和obj2   TODO 每次数据是否变化
         self.data = data
-        if data:
-            self.train_one_step(data)
+        self.optimizer = self.getOpt()
+        # if data:
+        self.train_data(data)
         # self.displayObj()
 
     # def __init__(self) -> None:
@@ -86,8 +87,20 @@ class Solution:
     def __len__(self):
         return 6
     
+    def train_data(self, data):
+        tmp_loss = []
+        for i in range(10):
+            res = 0.0
+            for data in self.data_loader:
+                loss = self.train_one_step(data)
+                res = res + loss
+            tmp_loss.append(res)
+        self.obj1 = tmp_loss[-1] - tmp_loss[0]
+        self.obj2 = tmp_loss[-1]
+        # print(len(tmp_loss))
+        self.displayObj()
+
     def train_one_step(self, data):
-        self.optimizer = self.getOpt()
         self.optimizer.zero_grad()
         loss = self.model({
             'batch_h': self.to_var(data['batch_h'], self.use_gpu),
@@ -98,7 +111,6 @@ class Solution:
         })
         loss.backward()
         self.optimizer.step()
-        self.obj2 = loss.item()
         return loss.item()
     
     def to_var(self, x, use_gpu):
@@ -157,7 +169,9 @@ class Solution:
         self.x6_adv_temperature = random.uniform(STATIC_ADV_TEMPERATURE[0], STATIC_ADV_TEMPERATURE[1])
 
     def display(self):
-        print("x1:{} x2:{} x3:{} x4:{} x5:{} x6:{} distance:{} rank:{} n:{}".format(
+        print("obj1:{} obj2:{} x1:{} x2:{} x3:{} x4:{} x5:{} x6:{} distance:{} rank:{} n:{}".format(
+            self.obj1,
+            self.obj2,
             STATIC_OPTIMIZAER_TYPE[self.x1_optimizer_type], 
             self.x2_optimizer_lr, 
             STATIC_P_NORM[self.x3_p_norm], 
@@ -191,12 +205,13 @@ class Solution:
         return (self.x1_optimizer_type == other.x1_optimizer_type) & (self.x2_optimizer_lr == other.x2_optimizer_lr) & (self.x3_p_norm == other.x3_p_norm) &(self.x4_norm_flag == other.x4_norm_flag) &(self.x5_loss_type == other.x5_loss_type) &(self.x6_adv_temperature == other.x6_adv_temperature)
 
     def obj1_func1(self):
-        p_score = self.model.getPscore()
-        n_score = self.model.getNscore()
-        if (n_score.mean() == 200):
-            n_score = 0
+        return self.obj1
+        # p_score = self.model.getPscore()
+        # n_score = self.model.getNscore()
+        # if (n_score.mean() == 200):
+        #     n_score = 0
         # return (torch.max(p_score - n_score, -self.margin)).mean() + self.margin
-        return (p_score - n_score).mean()
+        # return (p_score - n_score).mean()
         # return self.model.getPscore().mean()
         # return -(self.x1_optimizer_type + self.x2_optimizer_lr + self.x3_p_norm + self.x4_norm_flag + self.x5_loss_type + self.x6_adv_temperature)
     

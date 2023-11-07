@@ -25,6 +25,12 @@ class TrainDataSampler(object):
 	def getCurData(self):
 		return self.datasampler()
 
+	def getNextData(self):
+		self.batch += 1 
+		if self.batch > self.nbatches:
+			raise StopIteration()
+		return self.datasampler()
+
 class TrainDataLoader(object):
 
 	def __init__(self, 
@@ -236,3 +242,9 @@ class TrainDataLoader(object):
 			return TrainDataSampler(self.nbatches, self.sampling).getCurData()
 		else:
 			return TrainDataSampler(self.nbatches, self.cross_sampling).getCurData()
+		
+	def getNextData(self):
+		if self.sampling_mode == "normal":
+			return TrainDataSampler(self.nbatches, self.sampling).getNextData()
+		else:
+			return TrainDataSampler(self.nbatches, self.cross_sampling).getNextData()
