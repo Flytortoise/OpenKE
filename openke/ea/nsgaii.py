@@ -6,6 +6,9 @@ class NSGAII:
     def __init__(self) -> None:
         pass
 
+    def set_init_model(self, model):
+        self.init_model = model
+
     def fast_non_dominated_sort(self, P):
         """
         非支配排序
@@ -155,8 +158,8 @@ class NSGAII:
         """
         poplength = len(parent1)
 
-        offspring1 = Solution(same = False, data_loader=parent1.data_loader, data=parent1.data)
-        offspring2 = Solution(same = False, data_loader=parent1.data_loader, data=parent1.data)
+        offspring1 = Solution(in_model=self.init_model, same = False, data_loader=parent1.data_loader, data=parent1.data)
+        offspring2 = Solution(in_model=self.init_model, same = False, data_loader=parent1.data_loader, data=parent1.data)
 
         # 二进制交叉
         for i in range(poplength):

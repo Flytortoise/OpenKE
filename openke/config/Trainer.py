@@ -72,6 +72,7 @@ class Trainer(object):
         # 初始化种群
         Population = []
         ea_alg = NSGAII()
+        ea_alg.set_init_model(self.model)
 
         all_data = []
         # index = 0

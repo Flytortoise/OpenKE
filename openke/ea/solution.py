@@ -34,15 +34,16 @@ class Solution:
         # dataloader for training
         self.data_loader = data_loader
 
-        if same is True:
-            transe = copy.deepcopy(in_model.model)
-        else:
-            transe = TransE(
-                ent_tot = self.data_loader.get_ent_tot(),
-                rel_tot = self.data_loader.get_rel_tot(),
-                dim = 200,
-                p_norm = self.x3_p_norm,
-                norm_flag = True)
+        # if same is True:
+        #     transe = copy.deepcopy(in_model.model)
+        # else:
+        #     transe = TransE(
+        #         ent_tot = self.data_loader.get_ent_tot(),
+        #         rel_tot = self.data_loader.get_rel_tot(),
+        #         dim = 200,
+        #         p_norm = self.x3_p_norm,
+        #         norm_flag = True)
+        transe = copy.deepcopy(in_model.model)
         transe.setLNorm(self.x4_norm_flag)
         transe.setPNorm(self.x3_p_norm)
             
