@@ -92,7 +92,12 @@ class Trainer(object):
         Q_t = Q  # 当前这一届的子代种群
 
         for gen_cur in range(MAX_FE):
-            # print("**********FE {}****************".format(gen_cur))
+            print("**********FE {}****************".format(gen_cur))
+            for i in range(POPULATION_SIZE):
+                print("Solution %d" % i)
+                P_t[i].display()
+                print("-----")
+            print("----------------------------------------")
             R_t = P_t + Q_t  # combine parent and offspring population
             F = ea_alg.fast_non_dominated_sort(R_t)
 

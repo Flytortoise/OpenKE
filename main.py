@@ -35,7 +35,7 @@ model = NegativeSampling(
     batch_size = train_dataloader.get_batch_size()
 )
 
-pkg_name = './my_pkg/transe_FB15K237_{}.ckpt'.format(1)
+pkg_name = './my_pkg/transe_FB15K237_{}.ckpt'.format(3)
 print(pkg_name)
 
 # train the model
