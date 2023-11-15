@@ -36,19 +36,21 @@ model = NegativeSampling(
     batch_size = train_dataloader.get_batch_size()
 )
 
+for index in range(5):
+    train_pkg_name = './my_pkg/my_transE{}.ckpt'.format(index)
+    print(train_pkg_name)
 
-train_pkg_name = './my_pkg/my_transE{}.ckpt'.format(1)
-print(train_pkg_name)
-
-# train the model
-trainer = Trainer(model = model, data_loader = train_dataloader, train_times = 1000, alpha = 1.0, use_gpu = True)
-trainer.run()
-transe.save_checkpoint(train_pkg_name)
+    # train the model
+    trainer = Trainer(model = model, data_loader = train_dataloader, train_times = 1000, alpha = 1.0, use_gpu = True)
+    trainer.run()
+    transe = trainer.get_model()
+    transe.save_checkpoint(train_pkg_name)
 
 
-# test the model
-# test_pkg_name = "./checkpoint/transe_FB15K237_1.ckpt"
-test_pkg_name = train_pkg_name
-transe.load_checkpoint(test_pkg_name)
-tester = Tester(model = transe, data_loader = test_dataloader, use_gpu = True)
-tester.run_link_prediction(type_constrain = False)
+    # test the model
+    # test_pkg_name = "./checkpoint/transe_FB15K237_1.ckpt"
+    test_pkg_name = train_pkg_name
+    transe.load_checkpoint(test_pkg_name)
+    tester = Tester(model = transe, data_loader = test_dataloader, use_gpu = True)
+    tester.run_link_prediction(type_constrain = False)
+    print("-----------------------------------------")

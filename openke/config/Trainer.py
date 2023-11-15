@@ -13,6 +13,7 @@ import numpy as np
 import copy
 from tqdm import tqdm
 import random
+import gc
 
 from openke.ea.nsgaii import NSGAII
 from openke.ea.solution import Solution
@@ -109,19 +110,26 @@ class Trainer(object):
                 i = i + 1  # check the next front for inclusion
             F[i].sort(key=lambda x: x.distance)  # sort in descending order using <n，因为本身就在同一层，所以相当于直接比拥挤距离
             P_n = P_n + F[i][:POPULATION_SIZE - len(P_n)]
+
+            F=0
+            Q_t=0
+            P_t=0
+            R_t=0
+            gc.collect()
+
             Q_n = ea_alg.make_new_pop(P_n, ETA)  # use selection,crossover and mutation to create a new population Q_n
 
-                # 求得下一届的父代和子代成为当前届的父代和子代，，进入下一次迭代 《=》 t = t + 1
+            # 求得下一届的父代和子代成为当前届的父代和子代，，进入下一次迭代 《=》 t = t + 1
             P_t = P_n
             Q_t = Q_n
 
         print("**********************")
         index = 0
-        min_obj_flag = P_t[index].obj2
+        min_obj_flag = P_t[index].obj1
         for i in range(POPULATION_SIZE):
             P_t[i].displayObj()
-            if P_t[i].obj2 < min_obj_flag:
-                min_obj_flag = P_t[i].obj2
+            if P_t[i].obj1 < min_obj_flag:
+                min_obj_flag = P_t[i].obj1
                 index = i
 
         # index = random.randint(0, POPULATION_SIZE - 1)
@@ -129,6 +137,18 @@ class Trainer(object):
         P_t[index].display()
         self.model = P_t[index].model
         self.optimizer = P_t[index].optimizer
+
+        Population = 0
+        P_t = 0
+        P_n = 0
+        Q_t = 0
+        Q_n = 0
+        R_t = 0
+        F = 0
+        init_solution = 0
+        Q = 0
+        gc.collect()
+
         print("Finish initializing...")
         print(time.asctime(time.localtime(time.time())))
 
@@ -144,12 +164,15 @@ class Trainer(object):
                 print("Epoch %d has finished, saving..." % (epoch))
                 self.model.save_checkpoint(os.path.join(self.checkpoint_dir + "-" + str(epoch) + ".ckpt"))
 
-            # if epoch > 500 and (epoch % 100 == 0):
-            #     Population = P_t
-            #     data = self.data_loader.getCurData()
-            #     for i in range(POPULATION_SIZE):
-            #         Population[i].train_one_step(data)
-                
+            # if epoch == 500 or epoch == 900:
+            #     Population = []
+            #     ea_alg.set_init_model(self.model)
+
+            #     init_solution = Solution(self.model, same = True, opt_type = self.opt_method, lr = self.alpha, data_loader = self.data_loader, data = all_data)
+            #     Population.append(init_solution)
+            #     for i in range(POPULATION_SIZE-1):
+            #         Population.append(Solution(self.model, same = False, data_loader = self.data_loader, data = all_data))
+
             #     # 否 -> 非支配排序
             #     ea_alg.fast_non_dominated_sort(Population)
             #     Q = ea_alg.make_new_pop(Population, ETA)
@@ -157,7 +180,12 @@ class Trainer(object):
             #     Q_t = Q  # 当前这一届的子代种群
 
             #     for gen_cur in range(MAX_FE):
-            #         # print("**********FE {}****************".format(gen_cur))
+            #         print("**********FE {}****************".format(gen_cur))
+            #         for i in range(POPULATION_SIZE):
+            #             print("Solution %d" % i)
+            #             P_t[i].display()
+            #             print("-----")
+            #         print("----------------------------------------")
             #         R_t = P_t + Q_t  # combine parent and offspring population
             #         F = ea_alg.fast_non_dominated_sort(R_t)
 
@@ -169,22 +197,46 @@ class Trainer(object):
             #             i = i + 1  # check the next front for inclusion
             #         F[i].sort(key=lambda x: x.distance)  # sort in descending order using <n，因为本身就在同一层，所以相当于直接比拥挤距离
             #         P_n = P_n + F[i][:POPULATION_SIZE - len(P_n)]
+                    
+            #         F=0
+            #         Q_t=0
+            #         P_t=0
+            #         R_t=0
+            #         gc.collect()
+                    
             #         Q_n = ea_alg.make_new_pop(P_n, ETA)  # use selection,crossover and mutation to create a new population Q_n
 
             #             # 求得下一届的父代和子代成为当前届的父代和子代，，进入下一次迭代 《=》 t = t + 1
             #         P_t = P_n
             #         Q_t = Q_n
+
             #     print("**********************")
+            #     index = 0
+            #     min_obj_flag = P_t[index].obj1
             #     for i in range(POPULATION_SIZE):
             #         P_t[i].displayObj()
+            #         if P_t[i].obj1 < min_obj_flag:
+            #             min_obj_flag = P_t[i].obj1
+            #             index = i
 
-            #     index = random.randint(0, POPULATION_SIZE - 1)
+            #     # index = random.randint(0, POPULATION_SIZE - 1)
             #     print("select index {}".format(index))
-            #     P_t[index].displayObj()
+            #     P_t[index].display()
             #     self.model = P_t[index].model
             #     self.optimizer = P_t[index].optimizer
-            #     print("Finish select index...")
 
+            #     Population = 0
+            #     P_t = 0
+            #     P_n = 0
+            #     Q_t = 0
+            #     Q_n = 0
+            #     R_t = 0
+            #     F = 0
+            #     init_solution = 0
+            #     Q = 0
+            #     gc.collect()
+            #     print("Finish select...")
+            #     print(time.asctime(time.localtime(time.time())))
 
 
 

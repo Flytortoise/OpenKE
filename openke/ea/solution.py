@@ -96,8 +96,8 @@ class Solution:
                 loss = self.train_one_step(data)
                 res = res + loss
             tmp_loss.append(res)
-        self.obj1 = tmp_loss[-1] - tmp_loss[0]
-        self.obj2 = tmp_loss[-1]
+        self.obj2 = tmp_loss[-1] - tmp_loss[0]
+        self.obj1 = tmp_loss[-1]
         # print(len(tmp_loss))
         self.displayObj()
 

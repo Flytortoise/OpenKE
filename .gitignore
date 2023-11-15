@@ -5,8 +5,9 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-my_out/
-my_pkg/
+my_out/*.ckpt
+my_out/ok/*.ckpt
+my_pkg/*.ckpt
 result/
 checkpoint/
 build/
